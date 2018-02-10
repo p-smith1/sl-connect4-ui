@@ -1,4 +1,4 @@
-# sl-connect4-ui
+# sl-connect4-ui ![Travis CI Build](https://travis-ci.org/logitron/sl-connect4-ui.svg?branch=master)
 
 > Connect 4 Application
 
