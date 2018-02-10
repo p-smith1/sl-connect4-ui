@@ -34,7 +34,7 @@ describe('User Module: Actions', () => {
 
   describe('#login', () => {
     context('when login is successful', () => {
-      const accessInfo = { foo: 'bar' }
+      const accessInfo = { access_token: 'foobar' }
 
       before(async () => {
         signInStub.callsFake((resolve, reject) => {
@@ -50,7 +50,7 @@ describe('User Module: Actions', () => {
       })
 
       it('commits the access information', () => {
-        expect(vuexContext.commit).to.have.been.calledWith(types.SET_ACCESS_INFO, accessInfo)
+        expect(vuexContext.commit).to.have.been.calledWith(types.SET_ACCESS_TOKEN, accessInfo.access_token)
       })
     })
 

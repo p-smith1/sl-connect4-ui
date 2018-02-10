@@ -8,7 +8,7 @@ const actions = {
 
       googleAuth.directAccess()
       googleAuth.signIn((data) => {
-        context.commit(types.SET_ACCESS_INFO, data)
+        context.commit(types.SET_ACCESS_TOKEN, data.access_token)
         resolve()
       }, (error) => {
         reject(error)
