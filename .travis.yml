@@ -6,3 +6,10 @@ addons:
   chrome: stable
 before_install:
  - google-chrome-stable --headless --disable-gpu --remote-debugging-port=9222 http://localhost &
+deploy:
+  provider: heroku
+  api_key:
+    secure: UkydS3EsyU1OXp4P0wUcXWlsaIKG7hhKz9MEAc3aEeffBNbciMTi7YEegXIPUCyql376YkbFDuGbA5H9MNmni7FUszhgxbZbB0hAgoG+HMhehOBbK+mXrLHCenUv9qY7+UsZBY7dGhYEi+/SxM4rdBgMLaUdpPKG/U5Dscix8PmnvEh5y+WoLCGBJUORFiXAyNKawpM2yH3gcmM8cUtz4rSUtMYH7MxSmos2u4NfYlDCfyf9t/C5LCHmU2mD+NUjuKY0PYpVJ/QPRcDNacZbCHQB2Pgqx7lkftCvZTBnEv2mAP6lqdC0WbknKmNcc3ZY+B/4HpKl7SuwJfGxHcFrBYNIDCotMX7/VYPoTSrGx15CEPdJLkqB0QhutKpBgtrYmCbgCxzQeNjQmOa+hXrj+F0K6jcTDsGgGNHVhxuh12jidGL/qATXqurOMiaNkeEnjjlGZQeAr4t+Ge0QeLqWnlXKpB/Uy/0FH2eGJXCJX9I1OLRVVTxHcXkQ/ceYYa6sH0JAdla/gjrfVyNLvEurQCHD5AG4bif6thYOcc0riAPqKkfr3oz63XE5ki2cIrBs8TvpvUA9shLM7tzd+/STPAH1UEDoo+KoTTYIdYAtTtB3btEi0BgnHZN6ASi7h0xf8YfSzhUg4XAJyYORw2eTsK+J81QVQiNgVMJCxjf6B5M=
+  app: sl-connect4-staging
+  on:
+    repo: logitron/sl-connect4-ui
