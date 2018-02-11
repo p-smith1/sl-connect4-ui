@@ -11,7 +11,8 @@ import store from './store'
 
 Vue.config.productionTip = false
 
-Vue.use(GoogleAuth, { clientID: process.env.GOOGLE_CLIENT_ID })
+console.log(process.env.GOOGLE_CLIENT_ID)
+Vue.use(GoogleAuth, { clientId: process.env.GOOGLE_CLIENT_ID })
 Vue.use(Vuex)
 
 if (process.env.NODE_ENV !== 'testing') {
