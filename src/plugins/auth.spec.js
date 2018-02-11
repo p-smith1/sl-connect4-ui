@@ -19,6 +19,7 @@ describe('Plugin: Auth', () => {
     moxios.stubRequest('/noToken', { status: 200 })
     moxios.stubRequest('/token', { status: 200 })
     moxios.stubRequest('/invalidToken', { status: 401 })
+    moxios.stubRequest('/otherError', { status: 500 })
   })
 
   after(() => {
@@ -105,6 +106,36 @@ describe('Plugin: Auth', () => {
 
     it('routes user to home page', () => {
       expect(routerPushStub).to.have.been.calledWith({ name: 'Home' })
+    })
+  })
+
+  context('when server responds with alternative error status', () => {
+    let routerPushStub
+
+    before((done) => {
+      sandbox.stub(store, 'state').value({
+        user: {
+          accessToken: 'wubalubadubdub'
+        }
+      })
+
+      routerPushStub = sandbox.stub(router, 'push')
+
+      sandbox.spy(store, 'commit')
+
+      axios.get('/otherError').catch((response) => {
+        done()
+      })
+    })
+
+    after(() => sandbox.restore())
+
+    it('does not reroute user', () => {
+      expect(routerPushStub).not.to.have.been.called
+    })
+
+    it('does not commit anything', () => {
+      expect(store.commit).not.to.have.been.called
     })
   })
 })
