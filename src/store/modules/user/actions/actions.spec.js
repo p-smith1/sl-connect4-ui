@@ -11,7 +11,7 @@ describe('User Module: Actions', () => {
   let googleAuthStub
 
   before(() => {
-    Vue.use(GoogleAuth, { clientID: 'foobar' })
+    Vue.use(GoogleAuth, { clientId: 'foobar' })
 
     vuexContext = { commit: (actionText, response) => {} }
     commitSpy = sinon.spy(vuexContext, 'commit')
@@ -34,7 +34,7 @@ describe('User Module: Actions', () => {
 
   describe('#login', () => {
     context('when login is successful', () => {
-      const accessInfo = { access_token: 'foobar' }
+      const accessInfo = { Zi: { access_token: 'foobar' } }
 
       before(async () => {
         signInStub.callsFake((resolve, reject) => {
@@ -50,7 +50,7 @@ describe('User Module: Actions', () => {
       })
 
       it('commits the access information', () => {
-        expect(vuexContext.commit).to.have.been.calledWith(types.SET_ACCESS_TOKEN, accessInfo.access_token)
+        expect(vuexContext.commit).to.have.been.calledWith(types.SET_ACCESS_TOKEN, accessInfo.Zi.access_token)
       })
     })
 
