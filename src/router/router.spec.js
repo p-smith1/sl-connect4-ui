@@ -32,7 +32,7 @@ describe('Router', () => {
   context('when user navigates to route that requires authentication', () => {
     context('when user has a valid token', () => {
       before(() => {
-        storeStateStub = sinon.stub(store, 'state').value({ user: { access_token: 'askyfullofstars' } })
+        storeStateStub = sinon.stub(store, 'state').value({ user: { accessToken: 'askyfullofstars' } })
         router.replace({ name: 'RequiresAuth' })
       })
 
