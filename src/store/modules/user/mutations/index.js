@@ -9,8 +9,8 @@ const mutations = {
     delete state.profile
   },
 
-  [types.SET_ACCESS_TOKEN]: (state, accessInfo) => {
-    state.accessToken = accessInfo.access_token
+  [types.SET_ACCESS_TOKEN]: (state, accessToken) => {
+    state.accessToken = accessToken
   },
 
   [types.CLEAR_ACCESS_TOKEN]: (state) => {

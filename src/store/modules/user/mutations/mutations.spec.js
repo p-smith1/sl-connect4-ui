@@ -43,14 +43,14 @@ describe('User Module: Mutations', () => {
 
   describe('#SET_ACCESS_TOKEN', () => {
     let state = {}
-    let accessInfo = { access_token: 'foobar' }
+    let accessToken = 'foobar'
 
     before(() => {
-      mutations.SET_ACCESS_TOKEN(state, accessInfo)
+      mutations.SET_ACCESS_TOKEN(state, accessToken)
     })
 
     it('sets the state with access info', () => {
-      expect(state.accessToken).to.equal(accessInfo.access_token)
+      expect(state.accessToken).to.equal(accessToken)
     })
   })
 
