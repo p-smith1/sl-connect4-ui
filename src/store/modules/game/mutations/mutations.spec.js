@@ -114,7 +114,6 @@ describe('Game Module: Mutations', () => {
   })
 
   describe('#SET_GAME_TIE', () => {
-    const columnIndex = 5
     const primaryPlayerId = 22
     const secondaryPlayerId = 23
     const game = {
@@ -129,7 +128,7 @@ describe('Game Module: Mutations', () => {
     let state = { currentGame: game }
 
     before(() => {
-      mutations.SET_GAME_WINNER(state, {columnIndex, playerId: primaryPlayerId})
+      mutations.SET_GAME_TIE(state)
     })
 
     it('sets game over', () => {
@@ -139,7 +138,6 @@ describe('Game Module: Mutations', () => {
 
   describe('#SET_GAME_WINNER', () => {
     context('when primary player is winner', () => {
-      const columnIndex = 5
       const primaryPlayerId = 22
       const secondaryPlayerId = 23
       const game = {
@@ -154,7 +152,7 @@ describe('Game Module: Mutations', () => {
       let state = { currentGame: game }
 
       before(() => {
-        mutations.SET_GAME_WINNER(state, {columnIndex, playerId: primaryPlayerId})
+        mutations.SET_GAME_WINNER(state, {playerId: primaryPlayerId})
       })
 
       it('sets game over', () => {
@@ -171,7 +169,6 @@ describe('Game Module: Mutations', () => {
     })
 
     context('when secondary player is winner', () => {
-      const columnIndex = 5
       const primaryPlayerId = 22
       const secondaryPlayerId = 23
       const game = {
@@ -186,7 +183,7 @@ describe('Game Module: Mutations', () => {
       let state = { currentGame: game }
 
       before(() => {
-        mutations.SET_GAME_WINNER(state, {columnIndex, playerId: secondaryPlayerId})
+        mutations.SET_GAME_WINNER(state, {playerId: secondaryPlayerId})
       })
 
       it('sets game over', () => {

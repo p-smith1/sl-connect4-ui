@@ -37,7 +37,7 @@ const mutations = {
     })
   },
 
-  [types.SET_GAME_WINNER]: (state, {columnIndex, playerId}) => {
+  [types.SET_GAME_WINNER]: (state, {playerId}) => {
     let currentGame = state.currentGame
     const loserId = (playerId === currentGame.primary_player_id)
       ? currentGame.secondary_player_id
@@ -46,6 +46,10 @@ const mutations = {
     currentGame.is_game_over = true
     currentGame.winner_id = playerId
     currentGame.loser_id = loserId
+  },
+
+  [types.SET_GAME_TIE]: (state) => {
+    state.currentGame.is_game_over = true
   }
 }
 
