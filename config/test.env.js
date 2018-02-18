@@ -4,5 +4,7 @@ const devEnv = require('./dev.env')
 
 module.exports = merge(devEnv, {
   NODE_ENV: '"testing"',
-  GOOGLE_CLIENT_ID: '"678965545492-j3av4n43usb1e67gsd8odkt2oge21e34.apps.googleusercontent.com"'
+  GOOGLE_CLIENT_ID: '"678965545492-j3av4n43usb1e67gsd8odkt2oge21e34.apps.googleusercontent.com"',
+  BASE_CABLE_API: '"ws://localhost:3000/cable"',
+  BASE_API: '"http://localhost:3000"'
 })
