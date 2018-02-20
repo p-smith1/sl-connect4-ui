@@ -1,5 +1,6 @@
 import Vue from 'vue'
 import types from '../mutations/types'
+import axios from 'axios'
 
 const actions = {
   login: (context) => {
@@ -14,6 +15,13 @@ const actions = {
         reject(error)
       })
     })
+  },
+
+  getCurrent: (context) => {
+    return axios.get(`${process.env.BASE_API}/users/current`)
+      .then((response) => {
+        context.commit(types.SET_PROFILE, response.data)
+      })
   }
 }
 
