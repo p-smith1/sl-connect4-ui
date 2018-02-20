@@ -1,4 +1,5 @@
 import types from './types'
+import Vue from 'vue'
 
 const mutations = {
   [types.ADD_JOINABLE_GAME]: (state, joinableGame) => {
@@ -12,7 +13,7 @@ const mutations = {
   },
 
   [types.SET_CURRENT_GAME]: (state, currentGame) => {
-    state.currentGame = currentGame
+    Vue.set(state, 'currentGame', currentGame)
   },
 
   [types.SET_JOINABLE_GAMES]: (state, joinableGames) => {
