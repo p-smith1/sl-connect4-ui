@@ -5,15 +5,16 @@ import VueRouter from 'vue-router'
 import Vuex from 'vuex'
 import App from './App'
 import GoogleAuth from 'vue-google-auth'
+import Auth from '@/plugins/auth'
 
 import router from './router'
 import store from './store'
 
 Vue.config.productionTip = false
 
-console.log(process.env.GOOGLE_CLIENT_ID)
 Vue.use(GoogleAuth, { clientId: process.env.GOOGLE_CLIENT_ID })
 Vue.use(Vuex)
+Vue.use(Auth)
 
 if (process.env.NODE_ENV !== 'testing') {
   Vue.use(VueRouter)
