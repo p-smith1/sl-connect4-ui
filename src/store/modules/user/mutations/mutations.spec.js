@@ -1,29 +1,38 @@
 import mutations from './'
 
 describe('User Module: Mutations', () => {
-  describe('#SET_PROFILE', () => {
+  describe('#SET_CURRENT_USER', () => {
     let state = {}
 
-    let profile = {
-      token: 'token',
-      storeNumber: '1234',
-      ldap: 'abc123',
-      firstNmae: 'John',
-      lastName: 'Doe'
+    let currentUser = {
+      name: 'John Doe'
     }
 
     before(() => {
-      mutations.SET_PROFILE(state, profile)
+      mutations.SET_CURRENT_USER(state, currentUser)
     })
 
     it('sets the state of the profile object', () => {
-      expect(state.profile).to.equal(profile)
+      expect(state.currentUser).to.equal(currentUser)
     })
   })
 
-  describe('#CLEAR_PROFILE', () => {
+  describe('#SET_CURRENT_OPPONENT', () => {
+    let state = {}
+    const opponent = { foo: 'bar' }
+
+    before(() => {
+      mutations.SET_CURRENT_OPPONENT(state, opponent)
+    })
+
+    it('sets the state of current opponent', () => {
+      expect(state.currentOpponent).to.equal(opponent)
+    })
+  })
+
+  describe('#CLEAR_CURRENT_USER', () => {
     let state = {
-      profile: {
+      currentUser: {
         token: 'token',
         storeNumber: '1234',
         ldap: 'abc123',
@@ -33,11 +42,11 @@ describe('User Module: Mutations', () => {
     }
 
     before(() => {
-      mutations.CLEAR_PROFILE(state)
+      mutations.CLEAR_CURRENT_USER(state)
     })
 
     it('clears the user profile from state', () => {
-      expect(state.profile).to.be.undefined
+      expect(state.currentUser).to.be.undefined
     })
   })
 

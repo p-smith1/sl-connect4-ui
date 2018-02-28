@@ -1,12 +1,17 @@
+import Vue from 'vue'
 import types from './types'
 
 const mutations = {
-  [types.SET_PROFILE]: (state, profile) => {
-    state.profile = profile
+  [types.SET_CURRENT_USER]: (state, currentUser) => {
+    Vue.set(state, 'currentUser', currentUser)
   },
 
-  [types.CLEAR_PROFILE]: (state) => {
-    delete state.profile
+  [types.SET_CURRENT_OPPONENT]: (state, opponent) => {
+    Vue.set(state, 'currentOpponent', opponent)
+  },
+
+  [types.CLEAR_CURRENT_USER]: (state) => {
+    delete state.currentUser
   },
 
   [types.SET_ACCESS_TOKEN]: (state, accessToken) => {
