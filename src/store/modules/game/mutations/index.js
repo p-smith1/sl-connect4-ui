@@ -17,7 +17,7 @@ const mutations = {
   },
 
   [types.SET_JOINABLE_GAMES]: (state, joinableGames) => {
-    state.joinableGames = joinableGames
+    Vue.set(state, 'joinableGames', joinableGames)
   },
 
   [types.SET_GAME_COLUMN]: (state, {columnIndex, playerId}) => {
@@ -28,9 +28,10 @@ const mutations = {
 
     currentGame.move_count++
     currentGame.column_heights[columnIndex]++
+
     currentGame.board[columnIndex].find((val, rowIndex) => {
       if (val === 0) {
-        currentGame.board[columnIndex][rowIndex] = playerToken
+        currentGame.board[columnIndex].splice(rowIndex, 1, playerToken)
         return true
       }
 

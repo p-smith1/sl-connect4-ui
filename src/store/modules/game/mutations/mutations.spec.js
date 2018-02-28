@@ -9,7 +9,7 @@ describe('Game Module: Mutations', () => {
       mutations.SET_CURRENT_GAME(state, game)
     })
 
-    it('sets the state of the currentGame object', () => {
+    it('sets the state of current game', () => {
       expect(state.currentGame).to.equal(game)
     })
   })
