@@ -9,6 +9,7 @@ describe('User Module: Actions', () => {
   let vuexContext
   let commitSpy
   let signInStub
+  let signOutStub
   let directAccessSpy
   let googleAuthStub
   let axiosGetSpy
@@ -23,12 +24,14 @@ describe('User Module: Actions', () => {
 
     googleAuthStub = sinon.stub(Vue, 'googleAuth')
     signInStub = sinon.stub()
+    signOutStub = sinon.stub()
     directAccessSpy = sinon.spy()
 
     googleAuthStub.callsFake(() => {
       return {
         directAccess: directAccessSpy,
-        signIn: signInStub
+        signIn: signInStub,
+        signOut: signOutStub
       }
     })
   })
@@ -57,7 +60,8 @@ describe('User Module: Actions', () => {
       })
 
       it('commits the access information', () => {
-        expect(vuexContext.commit).to.have.been.calledWith(types.SET_ACCESS_TOKEN, accessInfo.Zi.id_token)
+        expect(vuexContext.commit).to.have.been
+          .calledWith(types.SET_ACCESS_TOKEN, accessInfo.Zi.id_token)
       })
     })
 
@@ -85,7 +89,56 @@ describe('User Module: Actions', () => {
     })
   })
 
-  describe('#getCurrent', () => {
+  describe('#logout', () => {
+    context('when logout is successful', () => {
+      before(async () => {
+        signOutStub.callsFake((resolve, reject) => {
+          resolve()
+        })
+
+        await actions.logout(vuexContext)
+      })
+
+      it('calls signout to Google 0Auth', () => {
+        expect(signOutStub).to.have.been.called
+      })
+
+      it('clears the access token', () => {
+        expect(vuexContext.commit).to.have.been
+          .calledWith(types.CLEAR_ACCESS_TOKEN)
+      })
+
+      it('clears the current user', () => {
+        expect(vuexContext.commit).to.have.been
+          .calledWith(types.CLEAR_CURRENT_USER)
+      })
+    })
+
+    context('when logout fails', () => {
+      let result = null
+      const errorInfo = { jim: 'bean' }
+
+      before(async () => {
+        commitSpy.resetHistory()
+
+        signOutStub.callsFake((resolve, reject) => {
+          reject(errorInfo)
+        })
+
+        result = await actions.logout(vuexContext).catch(e => e)
+      })
+
+      it('does not commit anything', () => {
+        expect(vuexContext.commit).not.to.have.been.called
+      })
+
+      it('returns error', () => {
+        expect(result).to.equal(errorInfo)
+      })
+    })
+  })
+
+  describe('#getCurrentUser', () => {
     const apiUrl = `${process.env.BASE_API}/users/current`
     const currentUser = { foo: 'bar' }
 
@@ -102,7 +155,7 @@ describe('User Module: Actions', () => {
           done()
         })
 
-        actions.getCurrent(vuexContext)
+        actions.getCurrentUser(vuexContext)
       })
 
       it('makes request to api', () => {
@@ -110,7 +163,8 @@ describe('User Module: Actions', () => {
       })
 
       it('commits the current user', () => {
-        expect(vuexContext.commit).to.have.been.calledWith(types.SET_PROFILE, currentUser)
+        expect(vuexContext.commit).to.have.been
+          .calledWith(types.SET_CURRENT_USER, currentUser)
       })
     })
 
@@ -127,7 +181,60 @@ describe('User Module: Actions', () => {
           done()
         })
 
-        actions.getCurrent(vuexContext)
+        actions.getCurrentUser(vuexContext)
+      })
+
+      it('does not commit', () => {
+        expect(vuexContext.commit).to.have.been.called
+      })
+    })
+  })
+
+  describe('#getCurrentOpponent', () => {
+    const apiUrl = `${process.env.BASE_API}/users/current`
+    const currentOpponentId = 42
+    const currentOpponent = { id: currentOpponentId }
+
+    context('when successful', () => {
+      before((done) => {
+        moxios.wait(() => {
+          const request = moxios.requests.mostRecent()
+
+          request.respondWith({
+            status: 200,
+            response: currentOpponent
+          })
+
+          done()
+        })
+
+        actions.getCurrentOpponent(vuexContext, {userId: currentOpponentId})
+      })
+
+      it('makes request to api', () => {
+        expect(axios.get).to.have.been.calledWith(apiUrl)
+      })
+
+      it('commits the current user', () => {
+        expect(vuexContext.commit).to.have.been
+          .calledWith(types.SET_CURRENT_OPPONENT, currentOpponent)
+      })
+    })
+
+    context('when unsuccessful', () => {
+      before((done) => {
+        moxios.wait(() => {
+          const request = moxios.requests.mostRecent()
+
+          request.respondWith({
+            status: 400,
+            responseText: 'Error!@#'
+          })
+
+          done()
+        })
+
+        actions.getCurrentOpponent(vuexContext, {userId: 43})
       })
 
       it('does not commit', () => {
