@@ -100,8 +100,8 @@ describe('Plugin: Auth', () => {
       expect(store.commit).to.have.been.calledWith(`user/${types.CLEAR_ACCESS_TOKEN}`)
     })
 
-    it('clears the user profile', () => {
-      expect(store.commit).to.have.been.calledWith(`user/${types.CLEAR_PROFILE}`)
+    it('clears the current user', () => {
+      expect(store.commit).to.have.been.calledWith(`user/${types.CLEAR_CURRENT_USER}`)
     })
 
     it('routes user to home page', () => {

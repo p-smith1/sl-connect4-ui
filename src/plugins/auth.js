@@ -7,7 +7,7 @@ export default {
   install (Vue, options) {
     axios.interceptors.request.use((config) => {
       const accessToken = store.state.user.accessToken
-      const hasAuthHeader = config.headers.post.hasOwnProperty('Authorization')
+      const hasAuthHeader = config.headers.hasOwnProperty('Authorization')
 
       if (accessToken && !hasAuthHeader) {
         this.setAuthHeader(config, accessToken)
@@ -37,7 +37,7 @@ export default {
 
   logout () {
     store.commit(`user/${types.CLEAR_ACCESS_TOKEN}`)
-    store.commit(`user/${types.CLEAR_PROFILE}`)
+    store.commit(`user/${types.CLEAR_CURRENT_USER}`)
     router.push({ name: 'Home' })
   },
 
