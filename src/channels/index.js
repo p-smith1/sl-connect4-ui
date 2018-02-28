@@ -4,14 +4,13 @@ import callbacks from './callbacks'
 
 let consumer = null
 let availableGamesSubscription = null
-let gamePlaySubscription = null
+let gamePlaySubscriptions = {}
 
 const channels = {
   getConsumer: () => {
     const accessToken = store.state.user.accessToken
 
     if (!consumer && accessToken) {
-      console.log(`${process.env.BASE_CABLE_API}?access_token=${store.state.user.accessToken}`)
       consumer = ActionCable
         .createConsumer(`${process.env.BASE_CABLE_API}?access_token=${store.state.user.accessToken}`)
     }
@@ -33,20 +32,14 @@ const channels = {
   getPlayGameChannel: (boardId) => {
     const consumer = channels.getConsumer()
 
-    if (!gamePlaySubscription && consumer) {
-      gamePlaySubscription = consumer.subscriptions
-        .create({ channel: 'GamePlayChannel', board_id: boardId }, {
-          received: (data) => {
-            console.log(data)
-          },
+    if (!gamePlaySubscriptions[boardId] && consumer) {
+      const subscription = consumer.subscriptions
+        .create({ channel: 'GamePlayChannel', board_id: boardId }, callbacks.playGameChannel)
 
-          rejected: () => {
-            console.log('rejected')
-          }
-        })
+      gamePlaySubscriptions[boardId] = subscription
     }
 
-    return gamePlaySubscription
+    return gamePlaySubscriptions[boardId]
   }
 }
 
