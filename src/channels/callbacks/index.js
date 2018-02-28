@@ -1,12 +1,12 @@
 import store from '@/store'
-import types from '@/store/modules/game/mutations/types'
+import gameTypes from '@/store/modules/game/mutations/types'
 
 const callbacks = {
   availableGamesChannel: {
     received: (data) => {
       const mutationType = (data.is_joinable)
-        ? types.ADD_JOINABLE_GAME
-        : types.REMOVE_JOINABLE_GAME
+        ? gameTypes.ADD_JOINABLE_GAME
+        : gameTypes.REMOVE_JOINABLE_GAME
 
       store.commit(`game/${mutationType}`, data.game)
 
@@ -15,7 +15,8 @@ const callbacks = {
         : null
 
       if (currentGameId === data.game.id) {
-        store.commit(`game/${types.SET_CURRENT_GAME}`, data.game)
+        store.commit(`game/${gameTypes.SET_CURRENT_GAME}`, data.game)
+        store.dispatch('user/getCurrentOpponent', { userId: data.game.secondary_player_id })
       }
     }
   },
@@ -23,20 +24,20 @@ const callbacks = {
   playGameChannel: {
     received: (data) => {
       if (data.move_type !== 'invalid_move') {
-        store.commit(`game/${types.SET_GAME_COLUMN}`, {
+        store.commit(`game/${gameTypes.SET_GAME_COLUMN}`, {
           columnIndex: data.column_index,
-          playerId: data.played_by.id
+          playerId: data.played_by ? data.played_by.id : 0
         })
       }
 
       switch (data.move_type) {
         case 'winning_move':
-          store.commit(`game/${types.SET_GAME_WINNER}`, {
-            playerId: data.played_by.id
+          store.commit(`game/${gameTypes.SET_GAME_WINNER}`, {
+            playerId: data.played_by ? data.played_by.id : 0
           })
           break
         case 'tie_move':
-          store.commit(`game/${types.SET_GAME_TIE}`)
+          store.commit(`game/${gameTypes.SET_GAME_TIE}`)
           break
         default:
           break

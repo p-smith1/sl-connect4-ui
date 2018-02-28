@@ -4,15 +4,18 @@ import types from '@/store/modules/game/mutations/types'
 
 describe('Channels: Callbacks', () => {
   let storeCommitStub
+  let storeDispatchStub
   let sandbox
 
   before(() => {
     sandbox = sinon.createSandbox({})
     storeCommitStub = sinon.stub(store, 'commit')
+    storeDispatchStub = sinon.stub(store, 'dispatch')
   })
 
   after(() => {
     storeCommitStub.restore()
+    storeDispatchStub.restore()
   })
 
   describe('#availableGamesChannel', () => {
@@ -52,9 +55,14 @@ describe('Channels: Callbacks', () => {
           after(() => sandbox.restore())
 
           context('when non-joinable game is current game', () => {
+            const secondaryPlayerId = 33
             const nonJoinableGameMsg = {
               is_joinable: false,
-              game: currentGame
+              game: {
+                id: currentGame.id,
+                secondary_player_id: secondaryPlayerId,
+                is_opponent_ai: currentGame.is_opponent_ai
+              }
             }
 
             before(() => {
@@ -69,6 +77,12 @@ describe('Channels: Callbacks', () => {
             it('commits the game to current game', () => {
               expect(store.commit).to.have.been
                 .calledWith(`game/${types.SET_CURRENT_GAME}`, nonJoinableGameMsg.game)
+            })
+
+            it('dispatches action to get opponent', () => {
+              expect(store.dispatch).to.have.been.calledWith(`user/getCurrentOpponent`, {
+                userId: secondaryPlayerId
+              })
             })
           })
 
@@ -121,82 +135,123 @@ describe('Channels: Callbacks', () => {
 
   describe('#playGameChannel', () => {
     describe('#received', () => {
-      const playerId = 20
-      const columnIndex = 3
-      const gamePlayMsg = {
-        move_type: 'valid_move',
-        played_by: { id: playerId },
-        column_index: 3
-      }
+      context('when move was made by player', () => {
+        const playerId = 20
+        const columnIndex = 3
+        const gamePlayMsg = {
+          move_type: 'valid_move',
+          played_by: { id: playerId },
+          column_index: 3
+        }
 
-      context('when move type is valid_move', () => {
-        before(() => {
-          storeCommitStub.resetHistory()
-          gamePlayMsg.move_type = 'valid_move'
+        context('when move type is valid_move', () => {
+          before(() => {
+            storeCommitStub.resetHistory()
+            gamePlayMsg.move_type = 'valid_move'
 
-          callbacks.playGameChannel.received(gamePlayMsg)
+            callbacks.playGameChannel.received(gamePlayMsg)
+          })
+
+          it('commits the move to state', () => {
+            expect(store.commit).to.have.been
+              .calledWith(`game/${types.SET_GAME_COLUMN}`, {columnIndex, playerId})
+          })
         })
 
-        it('commits the move to state', () => {
-          expect(store.commit).to.have.been
-            .calledWith(`game/${types.SET_GAME_COLUMN}`, {columnIndex, playerId})
+        context('when move type is invalid_move', () => {
+          before(() => {
+            storeCommitStub.resetHistory()
+            gamePlayMsg.move_type = 'invalid_move'
+
+            callbacks.playGameChannel.received(gamePlayMsg)
+          })
+
+          it('commits nothing', () => {
+            expect(store.commit).not.to.have.been.called
+          })
+        })
+
+        context('when move type is winning_move', () => {
+          before(() => {
+            storeCommitStub.resetHistory()
+            gamePlayMsg.move_type = 'winning_move'
+
+            callbacks.playGameChannel.received(gamePlayMsg)
+          })
+
+          it('commits the move to state', () => {
+            expect(store.commit).to.have.been
+              .calledWith(`game/${types.SET_GAME_COLUMN}`, {columnIndex, playerId})
+          })
+
+          it('commits the win to state', () => {
+            expect(store.commit).to.have.been
+              .calledWith(`game/${types.SET_GAME_WINNER}`, {playerId})
+          })
+        })
+
+        context('when move type is tie_move', () => {
+          before(() => {
+            storeCommitStub.resetHistory()
+            gamePlayMsg.move_type = 'tie_move'
+
+            callbacks.playGameChannel.received(gamePlayMsg)
+          })
+
+          it('commits the move to state', () => {
+            expect(store.commit).to.have.been
+              .calledWith(`game/${types.SET_GAME_COLUMN}`, {columnIndex, playerId})
+          })
+
+          it('commits the win to state', () => {
+            expect(store.commit).to.have.been
+              .calledWith(`game/${types.SET_GAME_TIE}`)
+          })
         })
       })
 
-      context('when move type is invalid_move', () => {
-        before(() => {
-          storeCommitStub.resetHistory()
-          gamePlayMsg.move_type = 'invalid_move'
+      context('when move was made by ai', () => {
+        const playerId = 0
+        const columnIndex = 3
+        const gamePlayMsg = {
+          move_type: 'valid_move',
+          played_by: null,
+          column_index: 3
+        }
 
-          callbacks.playGameChannel.received(gamePlayMsg)
+        context('when move type is valid_move', () => {
+          before(() => {
+            storeCommitStub.resetHistory()
+            gamePlayMsg.move_type = 'valid_move'
+
+            callbacks.playGameChannel.received(gamePlayMsg)
+          })
+
+          it('commits the move to state', () => {
+            expect(store.commit).to.have.been
+              .calledWith(`game/${types.SET_GAME_COLUMN}`, {columnIndex, playerId})
+          })
         })
 
-        it('commits nothing', () => {
-          expect(store.commit).not.to.have.been.called
-        })
-      })
+        context('when move type is winning_move', () => {
+          before(() => {
+            storeCommitStub.resetHistory()
+            gamePlayMsg.move_type = 'winning_move'
 
-      context('when move type is winning_move', () => {
-        before(() => {
-          storeCommitStub.resetHistory()
-          gamePlayMsg.move_type = 'winning_move'
+            callbacks.playGameChannel.received(gamePlayMsg)
+          })
 
-          callbacks.playGameChannel.received(gamePlayMsg)
-        })
+          it('commits the move to state', () => {
+            expect(store.commit).to.have.been
+              .calledWith(`game/${types.SET_GAME_COLUMN}`, {columnIndex, playerId})
+          })
 
-        it('commits the move to state', () => {
-          expect(store.commit).to.have.been
-            .calledWith(`game/${types.SET_GAME_COLUMN}`, {columnIndex, playerId})
-        })
-
-        it('commits the win to state', () => {
-          expect(store.commit).to.have.been
-            .calledWith(`game/${types.SET_GAME_WINNER}`, {playerId})
-        })
-      })
-
-      context('when move type is tie_move', () => {
-        before(() => {
-          storeCommitStub.resetHistory()
-          gamePlayMsg.move_type = 'tie_move'
-
-          callbacks.playGameChannel.received(gamePlayMsg)
-        })
-
-        it('commits the move to state', () => {
-          expect(store.commit).to.have.been
-            .calledWith(`game/${types.SET_GAME_COLUMN}`, {columnIndex, playerId})
-        })
-
-        it('commits the win to state', () => {
-          expect(store.commit).to.have.been
-            .calledWith(`game/${types.SET_GAME_TIE}`)
+          it('commits the win to state', () => {
+            expect(store.commit).to.have.been
+              .calledWith(`game/${types.SET_GAME_WINNER}`, {playerId})
+          })
         })
       })
-    })
-
-    describe('#rejected', () => {
-
     })
   })
 })
